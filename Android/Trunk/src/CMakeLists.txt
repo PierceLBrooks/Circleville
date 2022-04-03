@@ -24,7 +24,7 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/../../SFML-2.4.1/include)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../include)
 include_directories(${INC})
 
-list(APPEND DEFINES "SFML_JNI_CLASS=\"com/piercelbrooks/sfml/app/MainActivity\"")
+list(APPEND DEFINES "SFML_JNI_CLASS=\"com/piercelbrooks/circleville/app/MainActivity\"")
 
 set(PROJECT_FILES
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp

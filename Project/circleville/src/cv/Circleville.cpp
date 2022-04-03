@@ -334,6 +334,7 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
         focusPoint = focus->getPosition()-areaLeft->getPosition();
         focusPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
         focusMove = -1.0f;
+        initialize(false);
     }
     for (unsigned int i = 0; i != fociControls.size(); ++i)
     {
@@ -378,6 +379,7 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                         temperature = 1.0f;
                         focusPoint = focus->getPosition()-areaLeft->getPosition();
                         focusPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
+                        initialize(false);
                     }
                     else
                     {
@@ -389,6 +391,7 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                     focusPoint = focus->getPosition()-areaLeft->getPosition();
                     focusPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
                     focusMove = -1.0f;
+                    initialize(false);
                 }
             }
             else
@@ -396,6 +399,7 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                 focusPoint = focus->getPosition()-areaLeft->getPosition();
                 focusPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
                 focusMove = -1.0f;
+                initialize(false);
             }
         }
         else
@@ -406,9 +410,9 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
         {
             if (win < 0.0f)
             {
-                if ((fociControls.size() == 0) && (target == nullptr))
+                if ((fociControls.size() == 0) && (target == nullptr) && (getDistance(goalPoint, focusPoint)*((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)) < 0.1f))
                 {
-                    while (getDistance(goalPoint, focusPoint)*((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)) < fociRadius*pi)
+                    do
                     {
                         goalPoint = areaLeft->getPosition();
                         for (unsigned int i = 0; i != foci; ++i)
@@ -426,7 +430,7 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                         }
                         goalPoint -= areaLeft->getPosition();
                         goalPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
-                    }
+                    } while (getDistance(goalPoint, focusPoint)*((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)) < fociRadius*pi);
                 }
                 temperature = getDistance(focus->getPosition(), areaLeft->getPosition()+(goalPoint*(1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)));
                 if (temperature < winThreshold)
@@ -628,7 +632,7 @@ void cv::Circleville::initialize(bool first)
     winDistance = 0.0f;
     for (unsigned int i = 0; i != foci; ++i)
     {
-        float distance = getDistance(goalPoint, fociReals[i]->getPosition());
+        float distance = getDistance(areaLeft->getPosition()+(goalPoint*(1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)), fociReals[i]->getPosition());
         if (distance > winDistance)
         {
             winDistance = distance;

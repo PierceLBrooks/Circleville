@@ -1,1 +1,1 @@
-include ':testbed', ':sfml'
+include ':app', ':sfml'
