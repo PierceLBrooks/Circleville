@@ -1,6 +1,6 @@
 #include "native-lib.hpp"
 #include "Circleville.hpp"
-#include "../../SFML-2.4.1/include/SFML/Window/Event.hpp"
+#include <SFML/Window/Event.hpp>
 #include <SFML/System/Clock.hpp>
 
 int main(int argc, char *argv[])

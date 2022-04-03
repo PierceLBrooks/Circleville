@@ -77,6 +77,10 @@ cv::Circleville::~Circleville()
 
 void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool first)
 {
+    if (cursor == nullptr)
+    {
+        return;
+    }
     sf::Vector2i previous = touchLocation;
     this->touches = touches;
     touchLocation = location;
