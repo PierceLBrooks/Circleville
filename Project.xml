@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildster directory="../build" distribution="../Distribution">
+  <project directory="../Project">
+    <dependencies>
+      <dependency>
+        <label>sfml</label>
+        <subpath>build</subpath>
+        <remote>
+          <url>https://github.com/SFML/SFML.git</url>
+          <git_repo>
+            <branch>2.5.1</branch>
+            <credentials>
+              <username>username</username>
+              <password>password</password>
+            </credentials>
+          </git_repo>
+        </remote>
+        <build>
+          <arguments></arguments>
+          <cmake>
+            <generator>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows">MinGW Makefiles</case>
+                <case check="Linux">Unix Makefiles</case>
+                <case check="Darwin">Xcode</case>
+                <default><quit></quit></default>
+              </switch>
+            </generator>
+            <source>..</source>
+          </cmake>
+        </build>
+        <exports>
+          <export type="all">
+            <key>SFML_PATH</key>
+            <value><install></install></value>
+          </export>
+          <export type="headers">
+            <key>SFML_INCLUDE_PATH</key>
+            <value><install></install>/include</value>
+          </export>
+          <export type="libraries">
+            <key>SFML_LIBRARIES_PATH</key>
+            <value>
+              <switch id="BUILDSTER_OS">
+                <case check="Windows"><install></install>/bin</case>
+                <case check="Linux"><install></install>/lib</case>
+                <case check="Darwin"><install></install>/lib</case>
+                <default><quit></quit></default>
+              </switch>
+            </value>
+          </export>
+        </exports>
+        <imports></imports>
+      </dependency>
+    </dependencies>
+    <targets>
+      <target type="executable">
+        <label>circleville</label>
+        <generator>
+          <switch id="BUILDSTER_OS">
+            <case check="Windows">CodeBlocks - MinGW Makefiles</case>
+            <case check="Linux">CodeBlocks - Unix Makefiles</case>
+            <case check="Darwin">Xcode</case>
+            <default><quit></quit></default>
+          </switch>
+        </generator>
+        <definitions></definitions>
+        <links>
+          <link>sfml-graphics*</link>
+          <link>sfml-window*</link>
+          <link>sfml-audio*</link>
+          <link>sfml-network*</link>
+          <link>sfml-system*</link>
+          <if_check id="BUILDSTER_OS" check="Windows">
+            <link>setupapi</link>
+            <link>iphlpapi</link>
+            <link>psapi</link>
+            <link>userenv</link>
+            <link>gdi32</link>
+            <link>crypt32</link>
+            <link>ws2_32</link>
+          </if_check>
+        </links>
+        <imports>
+          <import>sfml</import>
+        </imports>
+      </target>
+    </targets>
+  </project>
+</buildster>
