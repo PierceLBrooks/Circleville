@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildster directory="../build" distribution="../Distribution">
   <project directory="../Project">
+    <post>
+      <shells>
+        <shell>
+          <work><origin></origin></work>
+          <commands>
+            <command>
+              <copy>
+                <from><origin></origin>/../circleville.jpg</from>
+                <to><distribution></distribution></to>
+              </copy>
+            </command>
+          </commands>
+        </shell>
+      </shells>
+    </post>
     <dependencies>
       <dependency>
         <label>sfml</label>

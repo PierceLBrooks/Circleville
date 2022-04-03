@@ -12,6 +12,16 @@ int main(int argc, char** argv)
 
     sf::RenderWindow window(screen, "Circleville");
     window.setFramerateLimit(30);
+    
+    sf::Image icon;
+    if (icon.loadFromFile("circleville.jpg"))
+    {
+        window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    }
+    else
+    {
+        std::cout << "No Icon" << std::endl;
+    }
 
     sf::View view = window.getDefaultView();
 
