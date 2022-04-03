@@ -8,9 +8,13 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include "Random.hpp"
 
 namespace cv
@@ -18,7 +22,7 @@ namespace cv
     class Circleville
     {
         public:
-            Circleville(bool orientation, const sf::Vector2u& resolution, unsigned int foci, std::function<void(const std::string&)> messenger, unsigned int seed, float timeLeft, float timeLeftBase);
+            Circleville(bool orientation, const sf::Vector2u& resolution, unsigned int foci, std::function<void(const std::string&)> messenger, unsigned int seed, float timeLeft, float timeLeftBase, sf::Font* font = nullptr);
             ~Circleville();
             void touch(const sf::Vector2i& location, int touches, bool first);
             int update(sf::RenderWindow* window, float deltaTime, int touches, bool first, bool active);
@@ -59,6 +63,8 @@ namespace cv
             sf::Vector2f focusPoint;
             sf::Vector2f focusPointPrevious;
             sf::Vector2i touchLocation;
+            sf::Font* font;
+            sf::Text* text;
             sf::RectangleShape* areaMiddle;
             sf::RectangleShape* areaLeft;
             sf::RectangleShape* areaRight;

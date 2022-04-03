@@ -4,7 +4,7 @@
 #include "Circleville.hpp"
 #include <cmath>
 
-cv::Circleville::Circleville(bool orientation, const sf::Vector2u& resolution, unsigned int foci, std::function<void(const std::string&)> messenger, unsigned int seed, float timeLeft, float timeLeftBase) :
+cv::Circleville::Circleville(bool orientation, const sf::Vector2u& resolution, unsigned int foci, std::function<void(const std::string&)> messenger, unsigned int seed, float timeLeft, float timeLeftBase, sf::Font* font) :
     touches(0),
     seed(seed),
     foci(foci),
@@ -36,7 +36,9 @@ cv::Circleville::Circleville(bool orientation, const sf::Vector2u& resolution, u
     focus(nullptr),
     cursor(nullptr),
     target(nullptr),
-    random(nullptr)
+    random(nullptr),
+    text(nullptr),
+    font(font)
 {
 
 }
@@ -73,6 +75,7 @@ cv::Circleville::~Circleville()
         delete fociControlsReal[i];
     }
     delete random;
+    delete text;
 }
 
 void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool first)
@@ -187,6 +190,7 @@ void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool firs
                         if (!(((i+1)%static_cast<int>(foci) == fociIndices.back()) || ((i-1<0)?(static_cast<int>(foci)-1):(i-1) == fociIndices.back())))
                         {
                             continue;
+
                         }
                     }
                     if (getIntersection(intersection, fociControls.back()->getPosition(), sf::Vector2f(location), fociCenter->getPosition(), fociShapes[i]->getPosition()))
@@ -385,6 +389,7 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                         focusPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
                         initialize(false);
                     }
+
                     else
                     {
                         temperature = 1.0f-std::min(temperature/(winDistance-winThreshold), 1.0f);
@@ -467,6 +472,11 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
         goal->setPosition(areaLeft->getPosition()+(goalPoint*(1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)));
         goal->setFillColor(hsvToRGB(sf::Vector3f(360.0f-focusHue, 1.0f, 0.5f)));
         window->draw(*goal);
+    }
+    if (text != nullptr)
+    {
+        text->setString(sf::String(std::to_string(static_cast<int>(timeLeft))));
+        window->draw(*text);
     }
     return 0;
 }
@@ -640,6 +650,16 @@ void cv::Circleville::initialize(bool first)
         if (distance > winDistance)
         {
             winDistance = distance;
+        }
+    }
+    if (font != nullptr)
+    {
+        if (text == nullptr)
+        {
+            text = new sf::Text();
+            text->setFont(*font);
+            text->setFillColor(sf::Color::Black);
+            text->setPosition(fociRadius, fociRadius);
         }
     }
 }

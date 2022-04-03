@@ -8,11 +8,13 @@
 
 int main(int argc, char** argv)
 {
+    std::string report = "";
+
     sf::VideoMode screen(sf::VideoMode::getDesktopMode());
 
     sf::RenderWindow window(screen, "Circleville");
     window.setFramerateLimit(30);
-    
+
     sf::Image icon;
     if (icon.loadFromFile("circleville.jpg"))
     {
@@ -27,6 +29,25 @@ int main(int argc, char** argv)
 
     sf::Color background = sf::Color::White;
 
+    sf::Font* font = new sf::Font();
+    if (!font->loadFromFile("circleville.ttf"))
+    {
+        delete font;
+        font = nullptr;
+        std::cout << "No Font" << std::endl;
+    }
+
+    sf::Text* text = new sf::Text();
+    if (font != nullptr)
+    {
+        text->setFont(*font);
+    }
+    else
+    {
+        delete text;
+        text = nullptr;
+    }
+
     bool active = true;
     bool first = true;
 
@@ -37,14 +58,14 @@ int main(int argc, char** argv)
     unsigned int foci = fociBase;
 
     float score = 0.0f;
-    float timeGainBase = 30.0f;
+    float timeGainBase = 3.0f;
     float timeLost = 0.0f;
     float timeLeftBase = timeGainBase*2.0f;
     float timeLeft = timeLeftBase*powf(timeLeftBase/timeGainBase, 2.0f);
 
     sf::Clock clock;
 
-    cv::Circleville* circleville = new cv::Circleville((window.getSize().x > window.getSize().y) ? true : false, window.getSize(), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase);
+    cv::Circleville* circleville = new cv::Circleville((window.getSize().x > window.getSize().y) ? true : false, window.getSize(), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase, font);
 
     clock.restart();
 
@@ -66,13 +87,6 @@ int main(int argc, char** argv)
                     {
                         window.close();
                     }
-                    break;
-                case sf::Event::MouseLeft:
-                    active = false;
-                    break;
-                case sf::Event::MouseEntered:
-                    active = true;
-                    first = true;
                     break;
                 case sf::Event::LostFocus:
                     active = false;
@@ -110,13 +124,14 @@ int main(int argc, char** argv)
             }
             else
             {
-                if (touches <= 1)
+                if (touches == 1)
                 {
+                    report = "";
                     foci = fociBase;
                     score = 0.0f;
                     timeLost = 0.0f;
                     timeLeft = timeLeftBase*powf(timeLeftBase/timeGainBase, 2.0f);
-                    circleville = new cv::Circleville((view.getSize().x > view.getSize().y) ? true : false, sf::Vector2u(view.getSize()), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase);
+                    circleville = new cv::Circleville((view.getSize().x > view.getSize().y) ? true : false, sf::Vector2u(view.getSize()), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase, font);
                 }
             }
             window.clear(background);
@@ -135,13 +150,14 @@ int main(int argc, char** argv)
                         touches = 0;
                         ++foci;
                         delete circleville;
-                        circleville = new cv::Circleville((view.getSize().x > view.getSize().y) ? true : false, sf::Vector2u(view.getSize()), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase);
+                        circleville = new cv::Circleville((view.getSize().x > view.getSize().y) ? true : false, sf::Vector2u(view.getSize()), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase, font);
                     }
                     else if (result < 0)
                     {
                         score *= static_cast<float>(foci);
                         timeLeft = 0.0f;
                         std::cout << score << std::endl;
+                        report = "   Game over!\nScore: "+std::to_string(static_cast<int>(score))+"\nRounds: "+std::to_string(foci-2);
                         delete circleville;
                         circleville = nullptr;
                         break;
@@ -150,6 +166,17 @@ int main(int argc, char** argv)
                     {
                         break;
                     }
+                }
+            }
+            else
+            {
+                if (text != nullptr)
+                {
+                    text->setString(sf::String(report));
+                    text->setOrigin(sf::Vector2f(text->getGlobalBounds().width, text->getGlobalBounds().height)*0.5f);
+                    text->setPosition(view.getCenter());
+                    text->setFillColor(sf::Color::Black);
+                    window.draw(*text);
                 }
             }
             window.display();
@@ -173,13 +200,14 @@ int main(int argc, char** argv)
                         touches = 0;
                         ++foci;
                         delete circleville;
-                        circleville = new cv::Circleville((view.getSize().x > view.getSize().y) ? true : false, sf::Vector2u(view.getSize()), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase);
+                        circleville = new cv::Circleville((view.getSize().x > view.getSize().y) ? true : false, sf::Vector2u(view.getSize()), foci, [](const std::string& message){std::cout << message << std::endl;}, *reinterpret_cast<unsigned int*>(&window), timeLeft, timeLeftBase, font);
                     }
                     else if (result < 0)
                     {
                         score *= static_cast<float>(foci);
                         timeLeft = 0.0f;
                         std::cout << score << std::endl;
+                        report = "   Game over!\nScore: "+std::to_string(static_cast<int>(score))+"\nRounds: "+std::to_string(foci-2);
                         delete circleville;
                         circleville = nullptr;
                         break;
@@ -189,6 +217,7 @@ int main(int argc, char** argv)
                         break;
                     }
                 }
+                clock.restart();
             }
             first = false;
         }
@@ -199,6 +228,10 @@ int main(int argc, char** argv)
         }
         timeLost += deltaTime;
     }
+
+    delete circleville;
+    delete text;
+    delete font;
 
     return 0;
 }
