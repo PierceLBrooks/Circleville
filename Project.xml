@@ -8,7 +8,7 @@
           <commands>
             <command>
               <copy>
-                <from><origin></origin>/../circleville.jpg</from>
+                <from><origin></origin>/../*.jpg</from>
                 <to><distribution></distribution></to>
               </copy>
             </command>
