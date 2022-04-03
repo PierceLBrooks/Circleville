@@ -1,0 +1,6 @@
+[submodule "Buildster"]
+	path = Buildster
+	url = https://github.com/PierceLBrooks/Buildster.git
+[submodule "Android/SFML-2.4.1/src/SFML/Audio/openal-soft"]
+	path = Android/SFML-2.4.1/src/SFML/Audio/openal-soft
+	url = https://github.com/PierceLBrooks/openal-soft.git
