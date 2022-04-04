@@ -15,6 +15,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Audio/Music.hpp>
 #include "Random.hpp"
 
 namespace cv
@@ -91,6 +92,9 @@ namespace cv
             std::vector<sf::Sound*> sounds;
             std::function<void(const std::string&)> messenger;
             Random* random;
+            sf::SoundBuffer* winSoundBuffer;
+            sf::Sound* winSound;
+            static sf::Music* music;
     };
 }
 

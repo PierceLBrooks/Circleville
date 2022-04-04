@@ -222,10 +222,6 @@ int main(int argc, char** argv)
             first = false;
         }
         timeLeft -= deltaTime;
-        if (timeLeft > 0.0f)
-        {
-            std::cout << timeLeft << std::endl;
-        }
         timeLost += deltaTime;
     }
 

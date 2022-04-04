@@ -4,6 +4,8 @@
 #include "Circleville.hpp"
 #include <cmath>
 
+sf::Music* cv::Circleville::music = nullptr;
+
 cv::Circleville::Circleville(bool orientation, const sf::Vector2u& resolution, unsigned int foci, std::function<void(const std::string&)> messenger, unsigned int seed, float timeLeft, float timeLeftBase, sf::Font* font) :
     touches(0),
     seed(seed),
@@ -40,11 +42,42 @@ cv::Circleville::Circleville(bool orientation, const sf::Vector2u& resolution, u
     text(nullptr),
     font(font)
 {
-
+    if (music == nullptr)
+    {
+        music = new sf::Music();
+        if (music->openFromFile("circleville.wav"))
+        {
+            music->setLoop(true);
+            music->setVolume(2.5f);
+            music->play();
+        }
+    }
+    else
+    {
+        if (music->getStatus() != sf::SoundSource::Playing)
+        {
+            music->play();
+        }
+    }
+    winSoundBuffer = new sf::SoundBuffer();
+    if (winSoundBuffer->loadFromFile("win.wav"))
+    {
+        winSound = new sf::Sound();
+        winSound->setBuffer(*winSoundBuffer);
+        winSound->setVolume(2.5f);
+    }
+    else
+    {
+        delete winSoundBuffer;
+        winSoundBuffer = nullptr;
+        winSound = nullptr;
+    }
 }
 
 cv::Circleville::~Circleville()
 {
+    delete winSound;
+    delete winSoundBuffer;
     delete goalTemperature;
     delete goal;
     delete focus;
@@ -463,6 +496,14 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                     temperature = getDistance(focus->getPosition(), areaLeft->getPosition()+(goalPoint*(1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)));
                     if (temperature < winThreshold)
                     {
+                        if (winSound != nullptr)
+                        {
+                            if (music != nullptr)
+                            {
+                                music->stop();
+                            }
+                            winSound->play();
+                        }
                         win = 5.0f;
                         temperature = 1.0f;
                         focusPoint = focus->getPosition()-areaLeft->getPosition();
@@ -524,6 +565,14 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                 temperature = getDistance(focus->getPosition(), areaLeft->getPosition()+(goalPoint*(1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)));
                 if (temperature < winThreshold)
                 {
+                    if (winSound != nullptr)
+                    {
+                        if (music != nullptr)
+                        {
+                            music->stop();
+                        }
+                        winSound->play();
+                    }
                     win = 5.0f;
                     temperature = 1.0f;
                 }
@@ -751,6 +800,9 @@ void cv::Circleville::initialize(bool first)
             text->setFont(*font);
             text->setFillColor(sf::Color::Black);
             text->setPosition(fociRadius, fociRadius);
+#ifndef CV_CIRCLEVILLE_DESKTOP
+            text->setScale(3.0f, 3.0f);
+#endif
         }
     }
 }

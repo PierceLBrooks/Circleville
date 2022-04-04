@@ -10,6 +10,19 @@
               <copy>
                 <from>
                   <switch id="BUILDSTER_OS">
+                    <case check="Windows"><origin></origin>/../circleville.wav</case>
+                    <case check="Linux"><origin></origin>/../*.jpg</case>
+                    <case check="Darwin"><origin></origin>/../*.jpg</case>
+                    <default><quit></quit></default>
+                  </switch>
+                </from>
+                <to><distribution></distribution></to>
+              </copy>
+            </command>
+            <command>
+              <copy>
+                <from>
+                  <switch id="BUILDSTER_OS">
                     <case check="Windows"><origin></origin>/../circleville.jpg</case>
                     <case check="Linux"><origin></origin>/../*.jpg</case>
                     <case check="Darwin"><origin></origin>/../*.jpg</case>
@@ -99,7 +112,12 @@
             <default><quit></quit></default>
           </switch>
         </generator>
-        <definitions></definitions>
+        <definitions>
+          <definition>
+            <key>CV_CIRCLEVILLE_DESKTOP</key>
+            <value>1</value>
+          </definition>
+        </definitions>
         <links>
           <link>sfml-graphics*</link>
           <link>sfml-window*</link>
