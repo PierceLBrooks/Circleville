@@ -8,40 +8,19 @@
           <commands>
             <command>
               <copy>
-                <from>
-                  <switch id="BUILDSTER_OS">
-                    <case check="Windows"><origin></origin>/../circleville.wav</case>
-                    <case check="Linux"><origin></origin>/../*.jpg</case>
-                    <case check="Darwin"><origin></origin>/../*.jpg</case>
-                    <default><quit></quit></default>
-                  </switch>
-                </from>
+                <from><origin></origin>/../Data/*.wav</from>
                 <to><distribution></distribution></to>
               </copy>
             </command>
             <command>
               <copy>
-                <from>
-                  <switch id="BUILDSTER_OS">
-                    <case check="Windows"><origin></origin>/../circleville.jpg</case>
-                    <case check="Linux"><origin></origin>/../*.jpg</case>
-                    <case check="Darwin"><origin></origin>/../*.jpg</case>
-                    <default><quit></quit></default>
-                  </switch>
-                </from>
+                <from><origin></origin>/../Data/*.wav</from>
                 <to><distribution></distribution></to>
               </copy>
             </command>
             <command>
               <copy>
-                <from>
-                  <switch id="BUILDSTER_OS">
-                    <case check="Windows"><origin></origin>/../circleville.ttf</case>
-                    <case check="Linux"><origin></origin>/../*.ttf</case>
-                    <case check="Darwin"><origin></origin>/../*.ttf</case>
-                    <default><quit></quit></default>
-                  </switch>
-                </from>
+                <from><origin></origin>/../Data/*.ttf</from>
                 <to><distribution></distribution></to>
               </copy>
             </command>
