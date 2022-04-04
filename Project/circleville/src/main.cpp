@@ -88,6 +88,11 @@ int main(int argc, char** argv)
                         window.close();
                     }
                     break;
+                case sf::Event::Resized:
+                    view.setSize(static_cast<float>(event.size.width), static_cast<float>(event.size.height));
+                    view.setCenter(view.getSize()*0.5f);
+                    window.setView(view);
+                    break;
                 case sf::Event::LostFocus:
                     active = false;
                     background = sf::Color::Black;
