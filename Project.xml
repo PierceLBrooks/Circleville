@@ -8,7 +8,7 @@
           <commands>
             <command>
               <copy>
-                <from><origin></origin>/../Data/*.wav</from>
+                <from><origin></origin>/../Data/*.jpg</from>
                 <to><distribution></distribution></to>
               </copy>
             </command>
