@@ -58,7 +58,7 @@ int main(int argc, char** argv)
     unsigned int foci = fociBase;
 
     float score = 0.0f;
-    float timeGainBase = 3.0f;
+    float timeGainBase = 30.0f;
     float timeLost = 0.0f;
     float timeLeftBase = timeGainBase*2.0f;
     float timeLeft = timeLeftBase*powf(timeLeftBase/timeGainBase, 2.0f);

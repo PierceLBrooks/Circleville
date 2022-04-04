@@ -74,13 +74,21 @@ cv::Circleville::~Circleville()
     {
         delete fociControlsReal[i];
     }
+    for (unsigned int i = 0; i != sounds.size(); ++i)
+    {
+        delete sounds[i];
+    }
+    for (unsigned int i = 0; i != soundBuffers.size(); ++i)
+    {
+        delete soundBuffers[i];
+    }
     delete random;
     delete text;
 }
 
 void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool first)
 {
-    if (cursor == nullptr)
+    if ((cursor == nullptr) || (win > 0.0f))
     {
         return;
     }
@@ -111,6 +119,14 @@ void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool firs
             }
             if (fociIndices.size() < cap)
             {
+                for (unsigned int i = 0; i != sounds.size(); ++i)
+                {
+                    delete sounds[i];
+                }
+                for (unsigned int i = 0; i != soundBuffers.size(); ++i)
+                {
+                    delete soundBuffers[i];
+                }
                 for (unsigned int i = 0; i != fociControlsReal.size(); ++i)
                 {
                     delete fociControlsReal[i];
@@ -122,6 +138,8 @@ void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool firs
                 fociControlsReal.clear();
                 fociControls.clear();
                 fociIndices.clear();
+                sounds.clear();
+                soundBuffers.clear();
             }
         }
         target = nullptr;
@@ -213,6 +231,11 @@ void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool firs
                         }
                         else
                         {
+                            float amplitude = 1.0f;
+                            unsigned int sampleSize = 4096;
+                            sf::Vector3f extrema(powf(2.0f, 8.0f)-1.0f, 0.0f, 0.0f);
+                            extrema.y = -extrema.x;
+                            extrema.z = extrema.x-extrema.y;
                             fociControlsReal.push_back(new sf::CircleShape(fociRadius));
                             fociControlsReal.back()->setOrigin(sf::Vector2f(fociRadius, fociRadius));
                             fociControlsReal.back()->setPosition(intersection);
@@ -223,6 +246,36 @@ void cv::Circleville::touch(const sf::Vector2i& location, int touches, bool firs
                             focusPoint = focus->getPosition()-areaLeft->getPosition();
                             focusPointPrevious = focusPoint;
                             focusMove = focusMoveBase;
+                            focusIndex = 0;
+                            for (unsigned int j = 0; j != fociControlsReal.size(); ++j)
+                            {
+                                float phase = 0.0f;
+                                sf::Vector2f bounds(20.0f, 40.0f);
+                                sf::Int16* samples = new sf::Int16[sampleSize];
+                                soundBuffers.push_back(new sf::SoundBuffer());
+                                bounds.x *= static_cast<float>(j+1);
+                                bounds.y *= static_cast<float>(j+2);
+                                bounds += sf::Vector2f(120.0f, 360.0f);
+                                bounds *= (2.0f*pi)/static_cast<float>(sampleSize);
+                                for (unsigned int k = 0; k != sampleSize; ++k)
+                                {
+                                    float instant = getSweep(bounds.x, bounds.y, (1.0f*static_cast<float>(k))/static_cast<float>(sampleSize));
+                                    samples[k] = static_cast<sf::Int16>(std::min(extrema.x, std::max(extrema.y, extrema.z*amplitude*sinf(phase))));
+                                    phase = fmodf(phase+instant, 2.0f*pi);
+                                }
+                                if (!soundBuffers.back()->loadFromSamples(samples, sampleSize, 1, sampleSize))
+                                {
+                                    delete soundBuffers.back();
+                                    soundBuffers[soundBuffers.size()-1] = nullptr;
+                                    sounds.push_back(nullptr);
+                                    delete[] samples;
+                                    continue;
+                                }
+                                sounds.push_back(new sf::Sound());
+                                sounds.back()->setBuffer(*soundBuffers.back());
+                                sounds.back()->setLoop(true);
+                                delete[] samples;
+                            }
                         }
                         break;
                     }
@@ -328,6 +381,14 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
     }
     if ((touches > 1) && (focusMove > 0.0f)  && (win < 0.0f) && (focus != nullptr))
     {
+        for (unsigned int i = 0; i != sounds.size(); ++i)
+        {
+            delete sounds[i];
+        }
+        for (unsigned int i = 0; i != soundBuffers.size(); ++i)
+        {
+            delete soundBuffers[i];
+        }
         for (unsigned int i = 0; i != fociControlsReal.size(); ++i)
         {
             delete fociControlsReal[i];
@@ -339,6 +400,8 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
         fociControlsReal.clear();
         fociControls.clear();
         fociIndices.clear();
+        sounds.clear();
+        soundBuffers.clear();
         focusPoint = focus->getPosition()-areaLeft->getPosition();
         focusPoint *= 1.0f/((1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y));
         focusMove = -1.0f;
@@ -364,18 +427,35 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
                 {
                     break;
                 }
+                focusIndex += 1;
                 focusMove += focusMoveBase;
+                if (sounds.front() != nullptr)
+                {
+                    sounds.front()->stop();
+                }
+                delete sounds.front();
+                delete soundBuffers.front();
                 delete fociControls.front();
                 delete fociControlsReal.front();
                 fociControls.erase(fociControls.begin());
                 fociControlsReal.erase(fociControlsReal.begin());
                 fociIndices.erase(fociIndices.begin());
+                sounds.erase(sounds.begin());
+                soundBuffers.erase(soundBuffers.begin());
                 focusPointPrevious = focusPoint;
             }
             if (focusMove > 0.0f)
             {
                 if (fociControls.size() > 0)
                 {
+                    if (sounds.front() != nullptr)
+                    {
+                        if (sounds.front()->getStatus() != sf::SoundSource::Playing)
+                        {
+                            sounds.front()->setPitch(static_cast<float>(focusIndex+1)/static_cast<float>(foci));
+                            sounds.front()->play();
+                        }
+                    }
                     float key = getProjection(fociControlsReal[fociIndices.front()]->getPosition(), fociShapes[fociIndices.front()]->getPosition(), fociCenter->getPosition());
                     focusPoint = getInterpolation(getInterpolation(focusPointPrevious+areaLeft->getPosition(), fociReals[fociIndices.front()]->getPosition(), key), focusPointPrevious+areaLeft->getPosition(), focusMove/focusMoveBase);
                     focus->setPosition(focusPoint);
@@ -469,6 +549,17 @@ int cv::Circleville::update(sf::RenderWindow* window, float deltaTime, int touch
     }
     if (win > 0.0f)
     {
+        for (unsigned int i = 0; i != sounds.size(); ++i)
+        {
+            if (sounds[i] == nullptr)
+            {
+                continue;
+            }
+            if (sounds[i]->getStatus() == sf::SoundSource::Playing)
+            {
+                sounds[i]->stop();
+            }
+        }
         goal->setPosition(areaLeft->getPosition()+(goalPoint*(1.0f/3.0f)*std::min(areaLeft->getSize().x, areaLeft->getSize().y)));
         goal->setFillColor(hsvToRGB(sf::Vector3f(360.0f-focusHue, 1.0f, 0.5f)));
         window->draw(*goal);
@@ -775,6 +866,11 @@ sf::Vector2f cv::Circleville::getInterpolation(const sf::Vector2f& left, const s
 float cv::Circleville::getProjection(const sf::Vector2f& first, const sf::Vector2f& last, const sf::Vector2f& other)
 {
     return getDistance(first, other)/getDistance(last, other);
+}
+
+float cv::Circleville::getSweep(float first, float last, float other)
+{
+    return first+((last-first)*other);
 }
 
 sf::Color cv::Circleville::hsvToRGB(sf::Vector3f color)

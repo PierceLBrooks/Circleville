@@ -38,6 +38,7 @@ namespace cv
             static float getDeterminant(const sf::Vector2f& left, const sf::Vector2f& right);
             static sf::Vector2f getInterpolation(const sf::Vector2f& left, const sf::Vector2f& right, float key);
             static float getProjection(const sf::Vector2f& first, const sf::Vector2f& last, const sf::Vector2f& other);
+            static float getSweep(float first, float last, float other);
             static sf::Color hsvToRGB(sf::Vector3f color);
             static sf::Vector3f rgbToHSV(sf::Color color, bool normalize);
             float pi;
@@ -56,6 +57,7 @@ namespace cv
             int touches;
             unsigned int seed;
             unsigned int foci;
+            unsigned int focusIndex;
             bool orientation;
             sf::Vector2u resolution;
             sf::Vector2f origin;
@@ -85,6 +87,8 @@ namespace cv
             std::vector<sf::RectangleShape*> fociControls;
             std::vector<unsigned int> fociIndices;
             std::vector<sf::Vector2f> fociPoints;
+            std::vector<sf::SoundBuffer*> soundBuffers;
+            std::vector<sf::Sound*> sounds;
             std::function<void(const std::string&)> messenger;
             Random* random;
     };
