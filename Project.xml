@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<buildster directory="../build" distribution="../Distribution">
+<buildster directory="build" distribution="../Distribution">
   <project directory="../Project">
     <post>
       <shells>
@@ -125,11 +125,11 @@
           </definition>
         </definitions>
         <links>
-          <link>sfml-graphics*</link>
-          <link>sfml-window*</link>
-          <link>sfml-audio*</link>
-          <link>sfml-network*</link>
-          <link>sfml-system*</link>
+          <link>*sfml-graphics*</link>
+          <link>*sfml-window*</link>
+          <link>*sfml-audio*</link>
+          <link>*sfml-network*</link>
+          <link>*sfml-system*</link>
           <if_check id="BUILDSTER_OS" check="Windows">
             <link>setupapi</link>
             <link>iphlpapi</link>
