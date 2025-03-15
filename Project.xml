@@ -24,6 +24,15 @@
                 <to><distribution></distribution></to>
               </copy>
             </command>
+            <command>
+              <if_check id="BUILDSTER_OS" check="Darwin">
+                <copy>
+                  <from><origin></origin>/../*.framework</from>
+                  <to><distribution></distribution>/../Frameworks</to>
+                </copy>
+                <else>echo "ECHO"</else>
+              </if_check>
+            </command>
           </commands>
         </shell>
       </shells>
@@ -35,7 +44,7 @@
         <remote>
           <url>https://github.com/SFML/SFML.git</url>
           <git_repo>
-            <branch>2.5.1</branch>
+            <branch>2.6.1</branch>
             <credentials>
               <username>username</username>
               <password>password</password>
@@ -43,6 +52,24 @@
           </git_repo>
         </remote>
         <build>
+          <post>
+            <shells>
+              <shell>
+                <work><origin></origin></work>
+                <commands>
+                  <command>
+                    <if_check id="BUILDSTER_OS" check="Darwin">
+                      <copy>
+                        <from><origin></origin>/extlibs/libs-osx/Frameworks/*.framework</from>
+                        <to><distribution></distribution>/../..</to>
+                      </copy>
+                      <else>echo "ECHO"</else>
+                    </if_check>
+                  </command>
+                </commands>
+              </shell>
+            </shells>
+          </post>
           <arguments></arguments>
           <cmake>
             <generator>
