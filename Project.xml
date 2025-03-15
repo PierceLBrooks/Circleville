@@ -1,42 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildster directory="build" distribution="../Distribution">
   <project directory="../Project">
-    <post>
-      <shells>
-        <shell>
-          <work><origin></origin></work>
-          <commands>
-            <command>
-              <copy>
-                <from><origin></origin>/../Data/*.jpg</from>
-                <to><distribution></distribution></to>
-              </copy>
-            </command>
-            <command>
-              <copy>
-                <from><origin></origin>/../Data/*.wav</from>
-                <to><distribution></distribution></to>
-              </copy>
-            </command>
-            <command>
-              <copy>
-                <from><origin></origin>/../Data/*.ttf</from>
-                <to><distribution></distribution></to>
-              </copy>
-            </command>
-            <command>
-              <if_check id="BUILDSTER_OS" check="Darwin">
-                <copy>
-                  <from><origin></origin>/../*.framework</from>
-                  <to><distribution></distribution>/../Frameworks</to>
-                </copy>
-                <else>echo "ECHO"</else>
-              </if_check>
-            </command>
-          </commands>
-        </shell>
-      </shells>
-    </post>
     <dependencies>
       <dependency>
         <label>sfml</label>
@@ -52,24 +16,6 @@
           </git_repo>
         </remote>
         <build>
-          <post>
-            <shells>
-              <shell>
-                <work><origin></origin></work>
-                <commands>
-                  <command>
-                    <if_check id="BUILDSTER_OS" check="Darwin">
-                      <copy>
-                        <from><origin></origin>/extlibs/libs-osx/Frameworks/*.framework</from>
-                        <to><distribution></distribution>/../..</to>
-                      </copy>
-                      <else>echo "ECHO"</else>
-                    </if_check>
-                  </command>
-                </commands>
-              </shell>
-            </shells>
-          </post>
           <arguments></arguments>
           <cmake>
             <generator>
@@ -145,5 +91,41 @@
         </imports>
       </target>
     </targets>
+    <post>
+      <shells>
+        <shell>
+          <work><origin></origin></work>
+          <commands>
+            <command>
+              <copy>
+                <from><origin></origin>/../Data/*.jpg</from>
+                <to><distribution></distribution></to>
+              </copy>
+            </command>
+            <command>
+              <copy>
+                <from><origin></origin>/../Data/*.wav</from>
+                <to><distribution></distribution></to>
+              </copy>
+            </command>
+            <command>
+              <copy>
+                <from><origin></origin>/../Data/*.ttf</from>
+                <to><distribution></distribution></to>
+              </copy>
+            </command>
+            <command>
+              <if_check id="BUILDSTER_OS" check="Darwin">
+                <copy>
+                  <from><origin label="sfml"></origin>/extlibs/libs-osx/*.framework</from>
+                  <to><distribution></distribution>/../Frameworks</to>
+                </copy>
+                <else>echo "ECHO"</else>
+              </if_check>
+            </command>
+          </commands>
+        </shell>
+      </shells>
+    </post>
   </project>
 </buildster>
