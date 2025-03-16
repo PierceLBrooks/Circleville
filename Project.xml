@@ -117,7 +117,7 @@
             <command>
               <if_check id="BUILDSTER_OS" check="Darwin">
                 <copy>
-                  <from><origin label="sfml"></origin>/extlibs/libs-osx/*.framework</from>
+                  <from><origin label="sfml"></origin>/extlibs/libs-osx/Frameworks/*.framework</from>
                   <to><distribution></distribution>/../Frameworks</to>
                 </copy>
                 <else>echo "ECHO"</else>
